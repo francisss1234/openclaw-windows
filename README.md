@@ -109,6 +109,46 @@ pnpm gateway:watch
 
 Note: `pnpm openclaw ...` runs TypeScript directly (via `tsx`). `pnpm build` produces `dist/` for running via Node / the packaged `openclaw` binary.
 
+## Windows native support (this fork)
+
+This fork includes Windows 11 compatibility fixes for running OpenClaw directly on Windows (without WSL2).
+
+### Key modifications
+
+- **CMD/BAT execution**: Fixed shell execution for Windows Command Prompt and batch scripts
+  - `src/process/exec.ts`: Windows-specific command handling
+  - `src/cli/ports.ts`: Port listener fixes for Windows
+- **Gateway HTTP server**: Enhanced metrics endpoint on Windows
+  - `src/gateway/server-http.ts`: Protected `/metrics` endpoint
+  - `src/gateway/server.impl.ts`: Windows server implementation
+- **Monitoring**: Added prom-client dependency for metrics/monitoring support
+
+### Running on Windows 11
+
+```bash
+# From source (Windows 11)
+git clone https://github.com/francisss1234/openclaw-windows.git
+cd openclaw-windows
+
+pnpm install
+pnpm ui:build
+pnpm build
+
+# Run Gateway (manual)
+node src/gateway/index.js
+
+# Or run OpenClaw CLI
+node dist/cli/index.js <command>
+```
+
+**Note**: Official OpenClaw recommends WSL2 for Windows. This fork provides native Windows support as an alternative for users who prefer running directly on Windows.
+
+### Known limitations
+
+- Windows task scheduler integration: Daemon installation may require manual setup
+- Script execution: Uses CMD/BAT instead of bash; adjust scripts accordingly
+- Path handling: Use backslashes (`\`) for local paths or forward slashes (`/`) with quotes
+
 ## Security defaults (DM access)
 
 OpenClaw connects to real messaging surfaces. Treat inbound DMs as **untrusted input**.
